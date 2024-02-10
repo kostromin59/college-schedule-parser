@@ -7,11 +7,12 @@ import { FIVE_SECONDS, HOUR, SCHEDULE_URL, Schedule } from "../utils";
 
 export class ScheduleParser {
   private schedules: Schedule[] = [];
+
   constructor(
-    private readonly groupsParser: GroupsParser,
-    private readonly semestersParser: SemesterParser,
-    private readonly weeksParser: WeeksParser,
-    private readonly siteParser: SiteParser,
+    readonly groupsParser: GroupsParser,
+    readonly semestersParser: SemesterParser,
+    readonly weeksParser: WeeksParser,
+    readonly siteParser: SiteParser,
   ) {
     this.getSchedules();
 

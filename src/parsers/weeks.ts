@@ -20,6 +20,7 @@ export class WeeksParser implements IsReady {
           studyyear_id: this.siteParser.extractStudyYearId()
         }
       });
+
       this.weeks = data;
       this.isReady = true;
     } catch {
