@@ -1,17 +1,18 @@
 import axios from "axios";
-import { HOUR, READY_EVENT, SITE_URL } from "../utils";
+import { FIVE_SECONDS, HOUR, IsReady, READY_EVENT, SITE_URL, UPDATE_EVENT } from "../utils";
 import { JSDOM } from "jsdom";
 import { EventEmitter } from "node:events";
 
-
-export class SiteParser extends EventEmitter {
+export class SiteParser extends EventEmitter implements IsReady {
   document: Document | null = null;
   site: string = "";
+  isReady: boolean = false;
 
   constructor() {
     super();
+
+    this.getDocument();
     setInterval(() => this.getDocument(), HOUR);
-    this.getDocument().then(() => this.emit(READY_EVENT));
   }
 
   private async getDocument() {
@@ -25,9 +26,16 @@ export class SiteParser extends EventEmitter {
 
       this.document = document;
       this.site = data;
-    } catch (e) {
-      console.log(e);
+
+      if (!this.isReady) {
+        this.isReady = true;
+        return this.emit(READY_EVENT);
+      }
+
+      this.emit(UPDATE_EVENT);
+    } catch {
       console.log("[SiteParser] Ошибка получения сайта");
+      setTimeout(() => this.getDocument(), FIVE_SECONDS);
     }
   }
 

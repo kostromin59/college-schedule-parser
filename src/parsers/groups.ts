@@ -1,18 +1,20 @@
-import { HOUR, Option } from "../utils";
+import { IsReady, Option, READY_EVENT, UPDATE_EVENT } from "../utils";
 import { SiteParser } from "./site";
 
 const PLACEHOLDER = "Выберите поток";
 
-export class GroupsParser {
+export class GroupsParser implements IsReady {
   groups: Option[] = [];
-  constructor(private readonly siteParser: SiteParser) {
-    this.getGroups();
+  isReady: boolean = false;
 
-    setInterval(() => this.getGroups(), HOUR);
+  constructor(private readonly siteParser: SiteParser) {
+    this.siteParser.once(READY_EVENT, () => this.getGroups());
+    this.siteParser.on(UPDATE_EVENT, () => this.getGroups());
   }
 
   private getGroups() {
     if (!this.siteParser.document) {
+      setTimeout(() => this.getGroups(), 1000);
       return console.log("[GroupsParser] Документ не найден!");
     }
 
@@ -35,5 +37,6 @@ export class GroupsParser {
     });
 
     this.groups = groups;
+    this.isReady = true;
   }
 }

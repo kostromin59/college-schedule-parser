@@ -1,26 +1,30 @@
 import axios from "axios";
-import { HOUR, WeekDate } from "../utils";
+import { IsReady, READY_EVENT, UPDATE_EVENT, WeekDate } from "../utils";
+import { SiteParser } from "./site";
 
 const URL = "https://psi.thinkery.ru/shedule/public/get_weekdates";
 
-export class WeeksParsers {
+export class WeeksParser implements IsReady {
   weeks: WeekDate[] = [];
-  constructor(private readonly studyYearId: string) {
-    this.getWeeks();
+  isReady: boolean = false;
 
-    setInterval(() => this.getWeeks(), HOUR);
+  constructor(private readonly siteParser: SiteParser) {
+    this.siteParser.once(READY_EVENT, () => this.getWeeks());
+    this.siteParser.on(UPDATE_EVENT, () => this.getWeeks());
   }
 
   private async getWeeks() {
     try {
       const { data } = await axios.get<WeekDate[]>(URL, {
         data: {
-          studyyear_id: this.studyYearId
+          studyyear_id: this.siteParser.extractStudyYearId()
         }
       });
       this.weeks = data;
-    } catch (e) {
-      console.log(e);
+      this.isReady = true;
+    } catch {
+      console.log("[WeeksParser] Ошибка запроса!");
+      setTimeout(() => this.getWeeks(), 1000);
     }
   }
 
