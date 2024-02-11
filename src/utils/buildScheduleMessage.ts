@@ -1,7 +1,7 @@
 import { Schedule } from "./types/schedule";
 
-export const buildScheduleMessage = (schedules: Record<string, Schedule[]>) => {
-  const message = Object.entries(schedules).sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime()).map(([date, schedules]) => {
+export const buildScheduleMessage = (schedules: Record<string, Schedule[]>): string[] => {
+  const messages = Object.entries(schedules).sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime()).map(([date, schedules]) => {
     const dayWeek = Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(new Date(date.split(".").reverse().join("-")));
     if (!schedules) return "";
 
@@ -11,6 +11,6 @@ export const buildScheduleMessage = (schedules: Record<string, Schedule[]>) => {
 
     const message = `<b>${dayWeek.toUpperCase()} (${date})</b>\n${todaySchedules}`;
     return message;
-  }).join("\n\n\n");
-  return message;
+  });
+  return messages;
 };
