@@ -126,6 +126,11 @@ export class Telegram {
         if (!messages) return await ctx.reply("Расписание не найдено!");
 
         for await (const message of messages) {
+          if (!message) {
+            await ctx.reply("Расписание не найдено!");
+            continue;
+          }
+
           await ctx.reply(message, { parse_mode: "HTML" });
         }
 
@@ -148,6 +153,11 @@ export class Telegram {
         if (!messages) return await ctx.reply("Расписание не найдено!");
 
         for await (const message of messages) {
+          if (!message) {
+            await ctx.reply("Расписание не найдено!");
+            continue;
+          }
+
           await ctx.reply(message, { parse_mode: "HTML" });
         }
 

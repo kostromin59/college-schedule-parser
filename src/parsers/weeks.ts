@@ -35,7 +35,7 @@ export class WeeksParser implements IsReady {
 
     const today = new Date(Date.now());
 
-    if (today.getDay() === 6 || today.getDay() === 0) {
+    if ((today.getDay() === 6 && today.getHours() >= 12) || today.getDay() === 0) {
       const element = this.weeks[selectedIndex + 1];
       if (!element) return this.weeks[selectedIndex];
 
