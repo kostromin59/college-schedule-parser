@@ -121,11 +121,17 @@ export class Telegram {
 
         const schedules = this.scheduleParser.findByGroup(student.groupId, student.subgroup);
         if (!schedules) return await ctx.reply("Расписание не найдено!");
-        const messages = buildScheduleMessage(schedules);
 
-        for await (const message of messages) {
+        const messages = buildScheduleMessage(schedules);
+        if (!messages) return await ctx.reply("Расписание не найдено!");
+
+        const midpoint = Math.ceil(messages.length / 2);
+        const splittedMessages = [messages.slice(0, midpoint).join("\n"), messages.slice(midpoint).join("\n")];
+
+        for await (const message of splittedMessages) {
           await ctx.reply(message, { parse_mode: "HTML" });
         }
+
         return;
       }
 
@@ -140,11 +146,18 @@ export class Telegram {
 
         const schedules = this.scheduleParser.findToday(student.groupId, student.subgroup);
         if (!schedules) return await ctx.reply("Расписание не найдено!");
-        const messages = buildScheduleMessage(schedules);
 
-        for await (const message of messages) {
+        const messages = buildScheduleMessage(schedules);
+        if (!messages) return await ctx.reply("Расписание не найдено!");
+
+        const midpoint = Math.ceil(messages.length / 2);
+        const splittedMessages = [messages.slice(0, midpoint).join("\n"), messages.slice(midpoint).join("\n")];
+
+
+        for await (const message of splittedMessages) {
           await ctx.reply(message, { parse_mode: "HTML" });
         }
+
         return;
       }
     });
