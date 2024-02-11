@@ -28,6 +28,8 @@ export class ScheduleParser {
       return;
     }
 
+    const schedules: Schedule[] = [];
+
     for await (const group of this.groupsParser.groups) {
       const { data } = await axios.post<Schedule[]>(SCHEDULE_URL, {
         studyyear_id: this.siteParser.extractStudyYearId(),
@@ -37,8 +39,10 @@ export class ScheduleParser {
         end_date: thisWeek.end_date
       });
 
-      this.schedules = this.schedules.concat(data);
+      schedules.push(...data);
     }
+
+    this.schedules = schedules;
   }
 
   findToday(groupId: string, subgroup: string): Record<string, Schedule[]> | null {
