@@ -9,4 +9,5 @@ export type Schedule = {
   subgroup_name: string;
   classtype_name: string;
   stream_id: number;
+  daytime_start: string;
 }
