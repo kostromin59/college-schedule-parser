@@ -125,10 +125,7 @@ export class Telegram {
         const messages = buildScheduleMessage(schedules);
         if (!messages) return await ctx.reply("Расписание не найдено!");
 
-        const midpoint = Math.ceil(messages.length / 2);
-        const splittedMessages = [messages.slice(0, midpoint).join("\n\n"), messages.slice(midpoint).join("\n\n")];
-
-        for await (const message of splittedMessages) {
+        for await (const message of messages) {
           await ctx.reply(message, { parse_mode: "HTML" });
         }
 
@@ -150,11 +147,7 @@ export class Telegram {
         const messages = buildScheduleMessage(schedules);
         if (!messages) return await ctx.reply("Расписание не найдено!");
 
-        const midpoint = Math.ceil(messages.length / 2);
-        const splittedMessages = [messages.slice(0, midpoint).join("\n"), messages.slice(midpoint).join("\n")];
-
-
-        for await (const message of splittedMessages) {
+        for await (const message of messages) {
           await ctx.reply(message, { parse_mode: "HTML" });
         }
 

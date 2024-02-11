@@ -12,5 +12,13 @@ export const buildScheduleMessage = (schedules: Record<string, Schedule[]>): str
     const message = `<b>${dayWeek.toUpperCase()} (${date})</b>\n${todaySchedules}`;
     return message;
   });
-  return messages;
+
+  const message = messages.join("\n\n\n");
+
+  if (message.length > 4096) {
+    const midpoint = Math.ceil(messages.length / 2);
+    const splittedMessages = [messages.slice(0, midpoint).join("\n\n"), messages.slice(midpoint).join("\n\n")];
+    return splittedMessages;
+  }
+  return [message];
 };
