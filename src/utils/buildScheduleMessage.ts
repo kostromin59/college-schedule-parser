@@ -9,7 +9,7 @@ export const buildScheduleMessage = (schedules: Record<string, Schedule[]>): str
       return `${index + 1}) Дисциплина: ${schedule.discipline_name} (${schedule.classtype_name})\nПреподаватель: ${schedule.teacher_fio}\nВремя: ${schedule.daytime_name}\nКабинет: ${schedule.cabinet_fullnumber_wotype}`;
     }).join("\n\n");
 
-    const message = `<b>${dayWeek.toUpperCase()} (${date})</b>\n${todaySchedules}`;
+    const message = `📆<b>${dayWeek.toUpperCase()} (${date})</b>\n${todaySchedules}`;
     return message;
   });
 
