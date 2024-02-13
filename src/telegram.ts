@@ -1,8 +1,10 @@
 import { Menu } from "@grammyjs/menu";
-import { Bot, InlineKeyboard, Keyboard, session } from "grammy";
+import { Bot, InlineKeyboard, InputFile, Keyboard, session } from "grammy";
 import { StudentModel } from "./models/student";
 import { ScheduleParser } from "./parsers";
 import { BotContext, GET_TODAY, GET_WEEK, SELECT_SUBGROUP, SETTINGS, SessionData, buildScheduleMessage } from "./utils";
+import nodeHtmlToImage from 'node-html-to-image'
+import fs from 'fs';
 
 export class Telegram {
   private bot: Bot<BotContext>;
@@ -157,7 +159,7 @@ export class Telegram {
 
         const schedules = this.scheduleParser.findByGroup(student.groupId, student.subgroup);
         if (!schedules) return await ctx.reply("Расписание не найдено!");
-
+        // здесь отправляется рассписание
         const messages = buildScheduleMessage(schedules);
         if (!messages) return await ctx.reply("Расписание не найдено!");
 
@@ -165,9 +167,17 @@ export class Telegram {
           if (!message) {
             await ctx.reply("Расписание не найдено!");
             continue;
-          }
+        }
 
+        const htmlContent = fs.readFileSync("./index.html", 'utf8');
+
+        await nodeHtmlToImage({
+          output:'./image' + student.groupId + '.png' ,
+          html: htmlContent,
+          content: {sh: Object.values(schedules)},
+        })
           await ctx.reply(message, { parse_mode: "HTML" });
+          await ctx.replyWithDocument(new InputFile("./image" + student.groupId + ".png") )
         }
 
         return;
@@ -201,4 +211,5 @@ export class Telegram {
       }
     });
   }
+
 }
