@@ -1,8 +1,8 @@
 import { Menu } from "@grammyjs/menu";
-import { Bot, Keyboard, session } from "grammy";
+import { Bot, InlineKeyboard, Keyboard, session } from "grammy";
 import { StudentModel } from "./models/student";
 import { ScheduleParser } from "./parsers";
-import { BotContext, GET_TODAY, GET_WEEK, SETTINGS, SessionData, buildScheduleMessage } from "./utils";
+import { BotContext, GET_TODAY, GET_WEEK, SELECT_SUBGROUP, SETTINGS, SessionData, buildScheduleMessage } from "./utils";
 
 export class Telegram {
   private bot: Bot<BotContext>;
@@ -38,8 +38,22 @@ export class Telegram {
   private buildSettings() {
     const settings = new Menu<BotContext>("settings").submenu("Группы", "groups");
     settings.text("Подгруппа", async (ctx) => {
-      await ctx.reply("Введите подгруппу (скопируйте с сайта):");
-      ctx.session.isWaitingSubgroup = true;
+      const student = await StudentModel.findOne({ telegramId: ctx.from.id });
+      if (!student || !student.groupId) return await ctx.reply("Сначала выберите группу!");
+
+      const subgroupsMenu = new InlineKeyboard();
+
+      const subgroups = this.scheduleParser.groupsParser.subgroups[student.groupId];
+      if (!subgroups) {
+        ctx.session.isWaitingSubgroup = true;
+        return await ctx.reply("Введите подгруппу (скопируйте с сайта):");
+      }
+
+      subgroups.forEach((subgroup) => {
+        subgroupsMenu.text(subgroup, SELECT_SUBGROUP + `:${subgroup}`).row();
+      });
+
+      return await ctx.reply("Выберите подгруппу:", { reply_markup: subgroupsMenu });
     }).row();
 
     settings.text("Проверить данные", async (ctx) => {
@@ -53,6 +67,7 @@ export class Telegram {
       return await ctx.reply("Ещё не все данные указаны!");
     }).row();
 
+    // Groups menu
     const groupsMenu = new Menu<BotContext>("groups");
 
     const groups = this.scheduleParser.groupsParser.groups;
@@ -96,6 +111,29 @@ export class Telegram {
       await ctx.reply("Укажите группу и подгруппу:", { reply_markup: this.settings });
     });
 
+    this.bot.on("callback_query:data", async (ctx) => {
+      if (!ctx.callbackQuery.data.startsWith(SELECT_SUBGROUP)) return;
+
+      const student = await StudentModel.findOne({ telegramId: ctx.from.id });
+      if (!student) {
+        ctx.session.isWaitingSubgroup = false;
+        await ctx.answerCallbackQuery("Ошибка!");
+        return await ctx.reply("Для начала воспользуйтесь командой /start");
+      }
+
+      const subgroup = ctx.callbackQuery.data.split(":").at(-1)?.trim();
+      if (!subgroup) {
+        await ctx.answerCallbackQuery("Ошибка!");
+        return await ctx.reply("Ошибка обработки подгруппы!");
+      }
+
+
+      await student.updateOne({ telegramId: student.telegramId, groupId: student.groupId, id: student.id, subgroup }).exec();
+      ctx.session.isWaitingSubgroup = false;
+      await ctx.reply(`Подгруппа ${subgroup} сохранена!`);
+      await ctx.answerCallbackQuery("Сохранено!");
+    });
+
     this.bot.on("message:text", async (ctx) => {
       const student = await StudentModel.findOne({ telegramId: ctx.from.id });
 
@@ -109,10 +147,8 @@ export class Telegram {
         }
 
         await student.updateOne({ telegramId: student.telegramId, groupId: student.groupId, id: student.id, subgroup }).exec();
-
-        await ctx.reply(`Подгруппа ${subgroup} сохранена!`);
-
         ctx.session.isWaitingSubgroup = false;
+        await ctx.reply(`Подгруппа ${subgroup} сохранена!`);
       }
 
       // Получить расписание на неделю

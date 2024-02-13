@@ -1,7 +1,7 @@
 import axios from "axios";
-import { FIVE_SECONDS, HOUR, IsReady, READY_EVENT, SITE_URL, UPDATE_EVENT } from "../utils";
 import { JSDOM } from "jsdom";
 import { EventEmitter } from "node:events";
+import { FIVE_SECONDS, HOUR, IsReady, READY_EVENT, SITE_URL, UPDATE_EVENT } from "../utils";
 
 export class SiteParser extends EventEmitter implements IsReady {
   document: Document | null = null;

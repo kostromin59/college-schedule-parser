@@ -15,8 +15,17 @@ export class ScheduleParser {
     readonly siteParser: SiteParser,
   ) {
     this.getSchedules();
+    const semester = this.semestersParser.semester?.value;
+    const currentWeek = this.weeksParser.getCurrentWeek()?.value;
+    if (semester && currentWeek) this.groupsParser.getSubgroups(semester, currentWeek);
 
-    setInterval(() => this.getSchedules(), HOUR);
+    setInterval(() => {
+      const semester = this.semestersParser.semester?.value;
+      const currentWeek = this.weeksParser.getCurrentWeek()?.value;
+      if (semester && currentWeek) this.groupsParser.getSubgroups(semester, currentWeek);
+
+      this.getSchedules();
+    }, HOUR);
   }
 
   private async getSchedules() {
