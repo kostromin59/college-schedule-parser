@@ -96,7 +96,7 @@ export class Telegram {
   private bindEvents() {
     this.bot.catch((err) => {
       console.log(err);
-      err.ctx.reply("Произошла ошибка! Попробуйте позже или сообщите разработчику!");
+      err.ctx.reply("Произошла ошибка! Попробуйте позже или сообщите разработчику @kostrominoff!");
     });
 
     this.bot.command("start", async (ctx) => {
@@ -157,7 +157,7 @@ export class Telegram {
 
       // Открыть настройки
       if (ctx.message.text === SETTINGS) {
-        return await ctx.reply("Настройки", { reply_markup: this.settings });
+        return await ctx.reply("В случае ошибки обратитесь к @kostrominoff\nНастройки:", { reply_markup: this.settings });
       }
 
       // Получить расписание на неделю
@@ -169,7 +169,7 @@ export class Telegram {
       }
 
       if (ctx.message.text === OLD_TODAY) {
-        await ctx.reply("Теперь используйте новую кнопку!", { reply_markup: this.keyboard });
+        await ctx.reply("Теперь используйте новую кнопку! В случае ошибки обратитесь к @kostrominoff", { reply_markup: this.keyboard });
         return;
       }
 
