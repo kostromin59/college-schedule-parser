@@ -153,7 +153,7 @@ export class Telegram {
       }
 
       // Проверка на валидность студента
-      if (!student || !student.groupId || !student.subgroup) return await ctx.answerCallbackQuery("Начните с команды /start");
+      if (!student || !student.groupId || !student.subgroup) return await ctx.reply("Начните с команды /start");
 
       // Открыть настройки
       if (ctx.message.text === SETTINGS) {
