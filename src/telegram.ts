@@ -96,7 +96,7 @@ export class Telegram {
   private bindEvents() {
     this.bot.catch((err) => {
       console.log(err);
-      err.ctx.reply("Произошла ошибка! Попробуйте позже или сообщите разработчику @kostrominoff!");
+      // err.ctx.reply("Произошла ошибка! Попробуйте позже или сообщите разработчику @kostrominoff!");
     });
 
     this.bot.command("start", async (ctx) => {

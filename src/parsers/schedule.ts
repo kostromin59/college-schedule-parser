@@ -29,29 +29,33 @@ export class ScheduleParser {
   }
 
   private async getSchedules() {
-    const thisWeek = this.weeksParser.getCurrentWeek();
+    try {
+      const thisWeek = this.weeksParser.getCurrentWeek();
 
-    if (!thisWeek || !this.semestersParser.semester || !this.groupsParser.groups.length) {
-      console.log("[ScheduleParser] Повторное получение расписаний через 5 секунд!");
-      setTimeout(() => this.getSchedules(), FIVE_SECONDS);
-      return;
+      if (!thisWeek || !this.semestersParser.semester || !this.groupsParser.groups.length) {
+        console.log("[ScheduleParser] Повторное получение расписаний через 5 секунд!");
+        setTimeout(() => this.getSchedules(), FIVE_SECONDS);
+        return;
+      }
+
+      const schedules: Schedule[] = [];
+
+      for await (const group of this.groupsParser.groups) {
+        const { data } = await axios.post<Schedule[]>(SCHEDULE_URL, {
+          studyyear_id: this.siteParser.extractStudyYearId(),
+          stream_id: group.value,
+          term: this.semestersParser.semester.value,
+          start_date: thisWeek.start_date,
+          end_date: thisWeek.end_date
+        });
+
+        schedules.push(...data);
+      }
+
+      this.schedules = schedules;
+    } catch {
+      console.log("[getSchedules] Произошла ошибка");
     }
-
-    const schedules: Schedule[] = [];
-
-    for await (const group of this.groupsParser.groups) {
-      const { data } = await axios.post<Schedule[]>(SCHEDULE_URL, {
-        studyyear_id: this.siteParser.extractStudyYearId(),
-        stream_id: group.value,
-        term: this.semestersParser.semester.value,
-        start_date: thisWeek.start_date,
-        end_date: thisWeek.end_date
-      });
-
-      schedules.push(...data);
-    }
-
-    this.schedules = schedules;
   }
 
   private formatDateToKey(date: Date): string {

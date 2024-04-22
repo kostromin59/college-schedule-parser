@@ -2,7 +2,7 @@ import axios from "axios";
 import { IsReady, READY_EVENT, UPDATE_EVENT, WeekDate } from "../utils";
 import { SiteParser } from "./site";
 
-const URL = "https://psi.thinkery.ru/shedule/public/get_weekdates";
+const URL = "https://psi.thinkery.ru/shedule/public/get_weekdates_actual";
 
 export class WeeksParser implements IsReady {
   weeks: WeekDate[] = [];
