@@ -9,8 +9,33 @@ services:
       - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
     ports:
       - "${MONGODB_PORT}:27017"
+    expose:
+      - "${MONGODB_PORT}:${MONGODB_PORT}"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - college_network
+  
+  app:
+    container_name: college-schedule-parser
+    restart: unless-stopped
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    networks:
+      - college_network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
 
 volumes:
   mongodb_data:
+
+networks:
+  college_network:
