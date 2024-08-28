@@ -31,7 +31,7 @@ export class WeeksParser implements IsReady {
 
   getCurrentWeek(): WeekDate | null {
     const selectedIndex = this.weeks.findIndex(({ selected }) => selected);
-    if (selectedIndex === -1) return null;
+    if (selectedIndex === -1) return this.weeks[0];
 
     const today = new Date(Date.now());
 

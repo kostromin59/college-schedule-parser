@@ -109,7 +109,7 @@ export class Telegram {
       const newStudent = new StudentModel({ telegramId: id });
       await newStudent.save();
 
-      await ctx.reply("Укажите группу и подгруппу:", { reply_markup: this.settings });
+      await ctx.reply("Выберите сначала группу, а затем обязательно подгруппу (даже если у вас нет подгрупп). Затем нажмите \"Проверить данные\"\n\nВ случае ошибки обратитесь к @kostromin59\n\nЯ уже на 4 курсе и после выпуска перестану поддерживать бота. Ищу студента, который сможет чинить, дорабатывать и держать запущенным бота. Бот написан на TypeScript. Обратитесь к @kostromin59 за подробной информацией.", { reply_markup: this.settings });
     });
 
     this.bot.on("callback_query:data", async (ctx) => {
@@ -157,7 +157,7 @@ export class Telegram {
 
       // Открыть настройки
       if (ctx.message.text === SETTINGS) {
-        return await ctx.reply("В случае ошибки обратитесь к @kostrominoff\nНастройки:", { reply_markup: this.settings });
+        return await ctx.reply("В случае ошибки обратитесь к @kostromin59\n\nЯ уже на 4 курсе и после выпуска перестану поддерживать бота. Ищу студента, который сможет чинить, дорабатывать и держать запущенным бота. Бот написан на TypeScript. Обратитесь к @kostromin59 за подробной информацией.\n\nНастройки:", { reply_markup: this.settings });
       }
 
       // Получить расписание на неделю

@@ -22,8 +22,8 @@ export class SemesterParser implements IsReady {
       setTimeout(() => this.getSemesters(), 1000);
       return console.log("[SemestrParser] Элемент не найден!");
     }
-
-    const option = Array.from(select.querySelectorAll("option")).at(-1);
+    
+    const option = Array.from(select.querySelectorAll("option")).find((opt) => opt.hasAttribute("selected"));
     if (!option) {
       setTimeout(() => this.getSemesters(), 1000);
       return console.log("[SemestrParser] Элемент не найден!");

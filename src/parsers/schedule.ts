@@ -1,9 +1,9 @@
 import axios from "axios";
+import { FIVE_SECONDS, HOUR, SCHEDULE_URL, Schedule } from "../utils";
 import { GroupsParser } from "./groups";
 import { SemesterParser } from "./semesters";
 import { SiteParser } from "./site";
 import { WeeksParser } from "./weeks";
-import { FIVE_SECONDS, HOUR, SCHEDULE_URL, Schedule } from "../utils";
 
 export class ScheduleParser {
   private schedules: Schedule[] = [];
