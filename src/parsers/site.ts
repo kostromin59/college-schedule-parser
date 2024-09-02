@@ -33,8 +33,9 @@ export class SiteParser extends EventEmitter implements IsReady {
       }
 
       this.emit(UPDATE_EVENT);
-    } catch {
+    } catch (e){
       console.log("[SiteParser] Ошибка получения сайта");
+      console.log(e);
       setTimeout(() => this.getDocument(), FIVE_SECONDS);
     }
   }
